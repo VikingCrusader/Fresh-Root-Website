@@ -1,0 +1,1918 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FreshRoots — Task 3</title>
+    <link rel="icon" href="img/logo.png" />
+    <style>
+      :root {
+        --g9: #1d3d29;
+        --g8: #2d5a3d;
+        --g6: #4a8c5f;
+        --g1: #e8f5e9;
+        --g0: #f3faf4;
+        --cream: #faf8f3;
+        --ink: #1f2a22;
+        --muted: #5d6b61;
+        --line: #dfe6e0;
+        --amber: #f0a020;
+        --red: #d64545;
+        --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #13261a;
+        font-family: var(--font);
+        color: var(--ink);
+      }
+      #stage {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: 1280px;
+        height: 720px;
+        transform-origin: center center;
+        background: var(--cream);
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      }
+      .slide {
+        position: absolute;
+        inset: 0;
+        padding: 56px 72px 70px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateX(40px);
+        transition: opacity 0.45s ease, transform 0.45s ease, visibility 0s 0.45s;
+        display: flex;
+        flex-direction: column;
+      }
+      .slide.active {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+        transition: opacity 0.45s ease, transform 0.45s ease;
+      }
+      .slide.past {
+        transform: translateX(-40px);
+      }
+      .kicker {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--g6);
+        margin: 0 0 6px;
+      }
+      h1 {
+        font-size: 64px;
+        line-height: 1.05;
+        margin: 0;
+        color: var(--g9);
+      }
+      h2 {
+        font-size: 40px;
+        line-height: 1.1;
+        margin: 0 0 22px;
+        color: var(--g9);
+      }
+      h3 {
+        margin: 0 0 6px;
+        color: var(--g9);
+        font-size: 21px;
+      }
+      p,
+      li {
+        font-size: 19px;
+        line-height: 1.45;
+      }
+      .muted {
+        color: var(--muted);
+      }
+      .grow {
+        flex: 1;
+        min-height: 0;
+      }
+      .row {
+        display: flex;
+        gap: 24px;
+      }
+      .grid2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+      }
+      .grid3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+      }
+      .card {
+        background: #fff;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 2px 10px rgba(29, 61, 41, 0.07);
+      }
+      .pill {
+        display: inline-block;
+        padding: 3px 12px;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 700;
+        background: var(--g1);
+        color: var(--g8);
+      }
+      .draft {
+        position: absolute;
+        top: 22px;
+        right: 28px;
+        background: #fff3d6;
+        color: #7a5600;
+        border: 1px dashed #d9a520;
+        font-size: 13px;
+        font-weight: 700;
+        padding: 4px 12px;
+        border-radius: 999px;
+      }
+      .footer-note {
+        position: absolute;
+        left: 72px;
+        bottom: 22px;
+        font-size: 13px;
+        color: var(--muted);
+      }
+      button {
+        font: inherit;
+        cursor: pointer;
+      }
+      .btn {
+        border: 2px solid var(--g8);
+        background: #fff;
+        color: var(--g8);
+        border-radius: 10px;
+        padding: 9px 16px;
+        font-weight: 700;
+        font-size: 16px;
+        text-decoration: none;
+        display: inline-block;
+      }
+      .btn.primary,
+      .btn.on {
+        background: var(--g8);
+        color: #fff;
+      }
+
+      /* title slide */
+      .title-slide {
+        background: linear-gradient(110deg, rgba(20, 45, 28, 0.92) 0%, rgba(29, 61, 41, 0.75) 55%, rgba(29, 61, 41, 0.2) 100%),
+          url("img/farmer_org.jpg") center/cover;
+        color: #fff;
+        justify-content: center;
+      }
+      .title-slide h1 {
+        color: #fff;
+        font-size: 84px;
+      }
+      .title-slide .kicker {
+        color: #a9dcb4;
+      }
+      .title-slide p {
+        font-size: 26px;
+        max-width: 760px;
+        margin: 18px 0 0;
+      }
+      .title-slide .team {
+        margin-top: 46px;
+        font-size: 18px;
+        opacity: 0.9;
+      }
+      .title-slide img.logo {
+        width: 120px;
+        background: #fff;
+        border-radius: 18px;
+        padding: 8px;
+        margin-bottom: 26px;
+      }
+
+      /* timeline */
+      .timeline {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 12px;
+        margin-top: 14px;
+      }
+      .tl {
+        border-radius: 14px;
+        padding: 18px 16px;
+        background: #fff;
+        border: 2px solid var(--line);
+        position: relative;
+      }
+      .tl b {
+        display: block;
+        font-size: 32px;
+        color: var(--g6);
+      }
+      .tl span {
+        font-size: 16px;
+        line-height: 1.35;
+        display: block;
+      }
+      .tl.done {
+        background: var(--g0);
+        border-color: var(--g6);
+      }
+      .tl.done::after {
+        content: "✓ done";
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--g6);
+      }
+      .tl.now {
+        background: var(--g8);
+        border-color: var(--g8);
+        color: #fff;
+        transform: translateY(-8px);
+        box-shadow: 0 10px 24px rgba(29, 61, 41, 0.3);
+      }
+      .tl.now b {
+        color: #a9dcb4;
+      }
+      .tl.now::after {
+        content: "● today";
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--amber);
+      }
+      .tl.started::after {
+        content: "◐ started";
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--amber);
+      }
+
+      .stat {
+        text-align: center;
+      }
+      .stat b {
+        display: block;
+        font-size: 54px;
+        color: var(--g8);
+        line-height: 1;
+      }
+      .stat span {
+        font-size: 16px;
+        color: var(--muted);
+      }
+
+      /* personas */
+      .persona {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .persona .avatar {
+        font-size: 54px;
+        line-height: 1;
+      }
+      .persona .meta {
+        color: var(--muted);
+        font-size: 16px;
+        margin: 0;
+      }
+      .persona dl {
+        margin: 6px 0 0;
+        display: grid;
+        gap: 6px;
+      }
+      .persona dt {
+        font-size: 13px;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--g6);
+      }
+      .persona dd {
+        margin: 0;
+        font-size: 16.5px;
+        line-height: 1.4;
+      }
+      .quote {
+        font-style: italic;
+        border-left: 4px solid var(--amber);
+        padding-left: 10px;
+        font-size: 16.5px;
+        margin: 4px 0 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: #fff;
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(29, 61, 41, 0.07);
+      }
+      th,
+      td {
+        text-align: left;
+        padding: 11px 14px;
+        font-size: 16.5px;
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+      }
+      th {
+        background: var(--g8);
+        color: #fff;
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .sev {
+        display: inline-flex;
+        gap: 3px;
+      }
+      .sev i {
+        width: 14px;
+        height: 14px;
+        border-radius: 3px;
+        background: var(--line);
+      }
+      .sev i.on {
+        background: var(--red);
+      }
+
+      /* competitors */
+      .comp h3 {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .comp ul {
+        margin: 8px 0 0;
+        padding-left: 20px;
+      }
+      .comp li {
+        font-size: 16.5px;
+        margin: 3px 0;
+      }
+      .plus {
+        color: var(--g6);
+      }
+      .minus {
+        color: var(--red);
+      }
+
+      /* problem → solution */
+      .ps {
+        display: grid;
+        grid-template-columns: 380px 1fr;
+        gap: 24px;
+        flex: 1;
+        min-height: 0;
+      }
+      .ps-list {
+        display: grid;
+        gap: 8px;
+        align-content: start;
+      }
+      .ps-list button {
+        text-align: left;
+        border: 2px solid var(--line);
+        background: #fff;
+        border-radius: 12px;
+        padding: 10px 14px;
+        font-size: 16.5px;
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        transition: all 0.15s;
+      }
+      .ps-list button b {
+        background: var(--g1);
+        color: var(--g8);
+        border-radius: 8px;
+        padding: 2px 8px;
+        font-size: 14px;
+      }
+      .ps-list button.on {
+        border-color: var(--g8);
+        background: var(--g8);
+        color: #fff;
+      }
+      .ps-list button.on b {
+        background: #fff;
+      }
+      .ps-detail {
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 16px;
+      }
+      .ps-box {
+        border-radius: 16px;
+        padding: 20px 24px;
+      }
+      .ps-box.problem {
+        background: #fdecea;
+        border: 2px solid #f3b6b0;
+      }
+      .ps-box.solution {
+        background: var(--g0);
+        border: 2px solid var(--g6);
+      }
+      .ps-box h4 {
+        margin: 0 0 6px;
+        font-size: 14px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+      .ps-box p {
+        margin: 0;
+        font-size: 20px;
+      }
+      .ps-foot {
+        display: flex;
+        align-items: end;
+        justify-content: space-between;
+        gap: 14px;
+      }
+      .ps-foot .muted {
+        font-size: 16px;
+        margin: 0;
+      }
+
+      /* use case flow */
+      .flow-toggle {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+      .flows {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+      }
+      .flow h3 {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+      }
+      .flow h3 em {
+        font-style: normal;
+        font-size: 44px;
+        color: var(--red);
+      }
+      .flow.ours h3 em {
+        color: var(--g6);
+      }
+      .flow ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 6px;
+      }
+      .flow li {
+        font-size: 16.5px;
+        background: #fff;
+        border: 1px solid var(--line);
+        border-left: 5px solid var(--red);
+        padding: 7px 12px;
+        border-radius: 8px;
+        opacity: 0;
+        transform: translateY(8px);
+        transition: all 0.3s;
+      }
+      .flow.ours li {
+        border-left-color: var(--g6);
+      }
+      .flow li.pain {
+        background: #fff4f2;
+      }
+      .flow li.show {
+        opacity: 1;
+        transform: none;
+      }
+
+      /* prompts */
+      pre {
+        white-space: pre-wrap;
+        background: #1f2a22;
+        color: #e6f2e8;
+        border-radius: 12px;
+        padding: 16px 18px;
+        font-size: 14.5px;
+        line-height: 1.45;
+        margin: 8px 0 0;
+        font-family: Consolas, "Cascadia Mono", monospace;
+      }
+      .steps {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        margin-bottom: 22px;
+        flex-wrap: wrap;
+      }
+      .steps span {
+        background: #fff;
+        border: 2px solid var(--g6);
+        border-radius: 999px;
+        padding: 6px 14px;
+        font-weight: 700;
+        font-size: 15px;
+        color: var(--g8);
+      }
+      .steps i {
+        color: var(--g6);
+        font-style: normal;
+        font-weight: 800;
+      }
+
+      /* mockups */
+      .gui {
+        display: grid;
+        grid-template-columns: 1.35fr 1fr;
+        gap: 26px;
+        flex: 1;
+        min-height: 0;
+      }
+      .mock {
+        border-radius: 14px;
+        overflow: hidden;
+        border: 1px solid #c9d3cc;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(29, 61, 41, 0.18);
+        display: flex;
+        flex-direction: column;
+        font-size: 11px;
+        height: 430px;
+      }
+      .mock[hidden] {
+        display: none;
+      }
+      .mock .bar {
+        background: #e9ecea;
+        padding: 6px 10px;
+        display: flex;
+        gap: 5px;
+      }
+      .mock .bar i {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: #c4ccc6;
+      }
+      .mock .hdr {
+        background: var(--g8);
+        color: #fff;
+        padding: 8px 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-weight: 700;
+      }
+      .mock .hdr small {
+        font-weight: 400;
+        opacity: 0.85;
+      }
+      .mock .body {
+        flex: 1;
+        padding: 10px;
+        display: grid;
+        gap: 8px;
+        min-height: 0;
+      }
+      .m-search {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 6px 8px;
+        color: #8a958d;
+        background: #fff;
+      }
+      .m-chips {
+        display: flex;
+        gap: 4px;
+        flex-wrap: wrap;
+      }
+      .m-chips span {
+        border: 1px solid var(--g8);
+        border-radius: 99px;
+        padding: 2px 8px;
+        color: var(--g8);
+      }
+      .m-chips span.on {
+        background: var(--g8);
+        color: #fff;
+      }
+      .m-hero {
+        height: 70px;
+        border-radius: 8px;
+        background: linear-gradient(rgba(29, 61, 41, 0.35), rgba(29, 61, 41, 0.55)), url("img/organic.jpg") center/cover;
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-weight: 800;
+        font-size: 14px;
+      }
+      .m-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 6px;
+      }
+      .m-card {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        overflow: hidden;
+        background: #fff;
+      }
+      .m-card img {
+        width: 100%;
+        height: 52px;
+        object-fit: cover;
+        display: block;
+      }
+      .m-card div {
+        padding: 4px 5px;
+        line-height: 1.3;
+      }
+      .m-card .f {
+        color: var(--muted);
+        font-size: 9.5px;
+      }
+      .m-card .p {
+        font-weight: 800;
+        color: var(--g8);
+      }
+      .m-card .b {
+        background: var(--g8);
+        color: #fff;
+        text-align: center;
+        border-radius: 4px;
+        margin-top: 3px;
+        padding: 2px;
+      }
+      .m-split {
+        display: grid;
+        grid-template-columns: 1.7fr 1fr;
+        gap: 8px;
+        min-height: 0;
+      }
+      .m-map {
+        border-radius: 8px;
+        background: #eaf2e3;
+        position: relative;
+        overflow: hidden;
+        min-height: 260px;
+      }
+      .m-map::before {
+        content: "";
+        position: absolute;
+        left: -10%;
+        right: -10%;
+        top: 45%;
+        height: 16px;
+        background: #9cc8e8;
+        transform: rotate(-12deg);
+        border-radius: 8px;
+      }
+      .m-ring {
+        position: absolute;
+        border: 2px dashed var(--g6);
+        border-radius: 50%;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .m-pin {
+        position: absolute;
+        font-size: 16px;
+      }
+      .m-list {
+        display: grid;
+        gap: 6px;
+        align-content: start;
+      }
+      .m-farm {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        padding: 5px;
+        display: flex;
+        gap: 6px;
+        align-items: center;
+      }
+      .m-farm img {
+        width: 36px;
+        height: 30px;
+        object-fit: cover;
+        border-radius: 4px;
+      }
+      .m-farm.on {
+        border-color: var(--g8);
+        background: var(--g0);
+      }
+      .m-cart {
+        border: 1px solid var(--g8);
+        border-radius: 6px;
+        padding: 6px;
+        background: var(--g0);
+      }
+      .m-cart .barx {
+        height: 5px;
+        background: var(--g1);
+        border-radius: 3px;
+        overflow: hidden;
+        margin: 4px 0;
+      }
+      .m-cart .barx i {
+        display: block;
+        width: 62%;
+        height: 100%;
+        background: var(--g6);
+      }
+      .gui-side {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+      .gui-side ul {
+        margin: 0;
+        padding-left: 0;
+        list-style: none;
+        display: grid;
+        gap: 6px;
+      }
+      .gui-side li {
+        font-size: 17px;
+      }
+      .ab-toggle {
+        display: flex;
+        gap: 8px;
+      }
+
+      /* evaluation */
+      .eval {
+        display: grid;
+        grid-template-columns: 1fr 330px;
+        gap: 26px;
+        flex: 1;
+        min-height: 0;
+      }
+      .eval td input[type="range"] {
+        width: 110px;
+        accent-color: var(--g8);
+        vertical-align: middle;
+      }
+      .eval td.w {
+        white-space: nowrap;
+      }
+      .eval td.w output {
+        display: inline-block;
+        width: 18px;
+        text-align: center;
+        font-weight: 800;
+      }
+      .score {
+        font-weight: 800;
+        text-align: center;
+      }
+      .score.win {
+        color: var(--g6);
+      }
+      .totals {
+        display: grid;
+        gap: 18px;
+        align-content: start;
+      }
+      .tbar {
+        display: grid;
+        gap: 6px;
+      }
+      .tbar .track {
+        height: 30px;
+        background: var(--line);
+        border-radius: 8px;
+        overflow: hidden;
+      }
+      .tbar .fill {
+        height: 100%;
+        background: #9aa69d;
+        border-radius: 8px;
+        transition: width 0.4s;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 10px;
+        color: #fff;
+        font-weight: 800;
+      }
+      .tbar.win .fill {
+        background: var(--g8);
+      }
+      .verdict {
+        font-size: 22px;
+        font-weight: 800;
+        color: var(--g8);
+      }
+
+      /* features */
+      .feat {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px 26px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+      .feat li {
+        font-size: 18px;
+        display: flex;
+        gap: 10px;
+        align-items: flex-start;
+      }
+      .feat li b.tag {
+        flex: none;
+        background: var(--g1);
+        color: var(--g8);
+        border-radius: 6px;
+        font-size: 13px;
+        padding: 2px 7px;
+        margin-top: 3px;
+      }
+
+      /* demo */
+      .demo {
+        display: grid;
+        grid-template-columns: 1fr 230px;
+        gap: 18px;
+        flex: 1;
+        min-height: 0;
+      }
+      .demo iframe {
+        width: 100%;
+        height: 100%;
+        border: 1px solid #c9d3cc;
+        border-radius: 12px;
+        background: #fff;
+        box-shadow: 0 14px 34px rgba(29, 61, 41, 0.18);
+      }
+      .demo-nav {
+        display: grid;
+        gap: 8px;
+        align-content: start;
+      }
+      .demo-nav button {
+        text-align: left;
+        border: 2px solid var(--line);
+        background: #fff;
+        border-radius: 10px;
+        padding: 7px 11px;
+        font-size: 14.5px;
+      }
+      .demo-nav button.on {
+        border-color: var(--g8);
+        background: var(--g8);
+        color: #fff;
+      }
+
+      /* end */
+      .end-slide {
+        background: linear-gradient(rgba(20, 45, 28, 0.82), rgba(20, 45, 28, 0.88)), url("img/organic.jpg") center/cover;
+        color: #fff;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+      }
+      .end-slide h1 {
+        color: #fff;
+        font-size: 96px;
+      }
+      .end-slide p {
+        font-size: 24px;
+        opacity: 0.9;
+      }
+
+      /* two-sided loop */
+      .loop-steps {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      .loop-steps button {
+        position: relative;
+        border: 2px solid var(--line);
+        background: #fff;
+        border-radius: 14px;
+        padding: 12px 8px 10px;
+        font-size: 14.5px;
+        font-weight: 700;
+        color: var(--g9);
+        display: grid;
+        gap: 4px;
+        justify-items: center;
+        transition: all 0.15s;
+      }
+      .loop-steps button span {
+        font-size: 30px;
+      }
+      .loop-steps button small {
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .loop-steps button.cust small {
+        color: #2a5ea8;
+      }
+      .loop-steps button.farm small {
+        color: #a86b00;
+      }
+      .loop-steps button:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        right: -12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--g6);
+        font-weight: 900;
+        z-index: 1;
+      }
+      .loop-steps button.on {
+        border-color: var(--g8);
+        background: var(--g8);
+        color: #fff;
+        transform: translateY(-4px);
+        box-shadow: 0 8px 18px rgba(29, 61, 41, 0.25);
+      }
+      .loop-steps button.on small {
+        color: #ffd27a;
+      }
+      .loop-detail {
+        display: grid;
+        grid-template-columns: 70px 1fr auto;
+        gap: 18px;
+        align-items: center;
+      }
+      .loop-detail .big-ic {
+        font-size: 52px;
+        text-align: center;
+      }
+      .loop-detail p {
+        margin: 4px 0 0;
+      }
+      .two-col-feat {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 22px;
+        flex: 1;
+        min-height: 0;
+      }
+      .two-col-feat ul {
+        margin: 6px 0 0;
+        padding-left: 0;
+        list-style: none;
+        display: grid;
+        gap: 12px;
+      }
+      .two-col-feat li {
+        font-size: 19px;
+        line-height: 1.4;
+      }
+      .two-col-feat .card h3 {
+        font-size: 23px;
+      }
+      .login-strip {
+        display: flex;
+        gap: 14px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-top: 16px;
+      }
+      .login-strip code {
+        background: #1f2a22;
+        color: #e6f2e8;
+        padding: 4px 10px;
+        border-radius: 8px;
+        font-size: 15px;
+      }
+
+      /* chrome */
+      #progress {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        height: 5px;
+        background: var(--amber);
+        transition: width 0.35s;
+        z-index: 5;
+      }
+      #controls {
+        position: absolute;
+        right: 22px;
+        bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        z-index: 6;
+        background: rgba(255, 255, 255, 0.9);
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 4px 6px;
+      }
+      #controls button {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        border: none;
+        background: var(--g8);
+        color: #fff;
+        font-size: 18px;
+        line-height: 1;
+      }
+      #controls button:disabled {
+        opacity: 0.3;
+        cursor: default;
+      }
+      #counter {
+        font-size: 14px;
+        font-weight: 700;
+        color: var(--g8);
+        min-width: 54px;
+        text-align: center;
+      }
+      #help {
+        position: fixed;
+        left: 12px;
+        bottom: 10px;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 12px;
+      }
+      :focus-visible {
+        outline: 3px solid var(--amber);
+        outline-offset: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage">
+      <!-- 1 · TITLE -->
+      <section class="slide title-slide" data-title="Title">
+        <img class="logo" src="img/logo.png" alt="FreshRoots logo" />
+        <p class="kicker">Semestral project · Exercise 3</p>
+        <h1>FreshRoots Cooperative</h1>
+        <p>From usability problems to a better GUI: improvements, two AI-generated concepts and our chosen design.</p>
+        <div class="team">Zhang Yiwen · Chien Ching Wen · Huong Huong Nguyen · November 2026</div>
+      </section>
+
+      <!-- 2 · WHERE WE ARE -->
+      <section class="slide" data-title="Progress">
+        <p class="kicker">Where we are</p>
+        <h2>Six milestones. Today we present exercise 3.</h2>
+        <div class="timeline">
+          <div class="tl done"><b>1</b><span>Team, topic and fictional company</span></div>
+          <div class="tl done"><b>2</b><span>Competitors, personas, use cases and usability study</span></div>
+          <div class="tl now"><b>3</b><span>Improve use cases and compare 2 AI-generated GUIs</span></div>
+          <div class="tl started"><b>4</b><span>Working prototype: shop, account and farmer portal</span></div>
+          <div class="tl"><b>5</b><span>Continue the prototype and test it with users</span></div>
+          <div class="tl"><b>6</b><span>Finish the study and get credit</span></div>
+        </div>
+        <div class="grow"></div>
+        <div class="card" style="display: flex; gap: 22px; align-items: center">
+          <span style="font-size: 44px">🎯</span>
+          <p style="margin: 0">
+            <b>Goal of this exercise:</b> take the problems we found in competitor apps, design fixes, generate two GUI concepts with
+            AI, pick the better one, and show it working in a real prototype.
+          </p>
+        </div>
+      </section>
+
+      <!-- 3 · COMPANY -->
+      <section class="slide" data-title="Company">
+        <p class="kicker">Recap · Exercise 1</p>
+        <h2>FreshRoots Cooperative: “Know your farmer, love your food”</h2>
+        <div class="grid2 grow">
+          <div class="card">
+            <h3>🏡 The company (fictional)</h3>
+            <p>A cooperative of family farms around Prague. The farms produce vegetables, fruit, dairy, eggs and bread, but they have no shared online sales channel.</p>
+            <h3 style="margin-top: 16px">💻 The product they want</h3>
+            <p>
+              A <b>web marketplace</b> where people living in the city can see <b>who grows their food and how far away the farm is</b>,
+              buy from several farms in one order, and choose a delivery time.
+            </p>
+          </div>
+          <div class="card" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-content: center">
+            <div class="stat"><b>7</b><span>partner farms in the demo</span></div>
+            <div class="stat"><b>&lt;10 km</b><span>delivery radius</span></div>
+            <div class="stat"><b>5</b><span>UI languages: EN, CS, DE, 简体, 繁體</span></div>
+            <div class="stat"><b>3</b><span>delivery windows per day</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4 · PERSONAS -->
+      <section class="slide" data-title="Personas">
+        <span class="draft">Draft: replace with your Exercise 2 personas</span>
+        <p class="kicker">Recap · Exercise 2</p>
+        <h2>Who we design for</h2>
+        <div class="grid3 grow">
+          <div class="card persona">
+            <span class="avatar">👩‍💼</span>
+            <h3>Anna, 34</h3>
+            <p class="meta">Project manager · mother of two · Prague 6</p>
+            <dl>
+              <dt>Goal</dt>
+              <dd>Order fresh food for the week in under 5 minutes, on her phone, in the evening</dd>
+              <dt>Frustration</dt>
+              <dd>Delivery fees that show up only at checkout; delivery times that don't fit her schedule</dd>
+            </dl>
+            <p class="quote">“I just want to know what it costs and when it arrives.”</p>
+          </div>
+          <div class="card persona">
+            <span class="avatar">👴</span>
+            <h3>Martin, 67</h3>
+            <p class="meta">Retired teacher · cooks every day · desktop user</p>
+            <dl>
+              <dt>Goal</dt>
+              <dd>Buy from farmers he can trust, and ask them questions</dd>
+              <dt>Frustration</dt>
+              <dd>Small text, cluttered pages, can't tell where the food comes from</dd>
+            </dl>
+            <p class="quote">“Supermarket ‘local’ labels mean nothing to me.”</p>
+          </div>
+          <div class="card persona">
+            <span class="avatar">🧑‍🎓</span>
+            <h3>Lin, 23</h3>
+            <p class="meta">International student from Taiwan · limited budget</p>
+            <dl>
+              <dt>Goal</dt>
+              <dd>Buy cheap, fresh vegetables near her dorm</dd>
+              <dt>Frustration</dt>
+              <dd>Local farm sites are in Czech only, so she can't compare prices or units</dd>
+            </dl>
+            <p class="quote">“I end up translating every page with my phone camera.”</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5 · USE CASES -->
+      <section class="slide" data-title="Use cases">
+        <p class="kicker">Recap · Exercise 2</p>
+        <h2>Key use cases</h2>
+        <table>
+          <thead>
+            <tr><th>#</th><th>Use case</th><th>Main persona</th><th>Success means…</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><b>UC1</b></td><td>Find local products by category and distance</td><td>Anna, Lin</td><td>Relevant products found in under 30 s</td></tr>
+            <tr><td><b>UC2</b></td><td>Learn about a farm and contact the farmer</td><td>Martin</td><td>Farm story, method and contact on one page</td></tr>
+            <tr><td><b>UC3</b></td><td>Put an order together from several farms</td><td>Anna</td><td>One cart, with a clear total and delivery fee</td></tr>
+            <tr><td><b>UC4</b></td><td>Check out and choose a delivery slot</td><td>Anna</td><td>Slot chosen, order confirmed, no surprises</td></tr>
+            <tr><td><b>UC5</b></td><td>Use the whole site in your own language</td><td>Lin</td><td>Every label, product and message translated</td></tr>
+            <tr><td><b>UC6</b></td><td>Register / log in, see past orders</td><td>All</td><td>Order history and status in “My account”</td></tr>
+            <tr><td><b>UC7</b></td><td>Farmer: manage products, prices and stock</td><td>James (farmer)</td><td>Stock change visible in the shop at once</td></tr>
+            <tr><td><b>UC8</b></td><td>Farmer: handle orders and answer customers</td><td>James (farmer)</td><td>Every order has a status; no lost messages</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 6 · COMPETITORS -->
+      <section class="slide" data-title="Competitors">
+        <span class="draft">Draft: check against your Exercise 2 study</span>
+        <p class="kicker">Exercise 2 · Usability study</p>
+        <h2>What we tested</h2>
+        <div class="grid3">
+          <div class="card comp">
+            <h3>🛒 Rohlik.cz</h3>
+            <p class="muted" style="margin: 0; font-size: 16px">Large online grocery store</p>
+            <ul>
+              <li class="plus">+ Fast checkout, clear delivery slots</li>
+              <li class="minus">− Product origin and farm hard to find</li>
+              <li class="minus">− Can't filter by distance or farm</li>
+            </ul>
+          </div>
+          <div class="card comp">
+            <h3>🗺️ Scuk.cz</h3>
+            <p class="muted" style="margin: 0; font-size: 16px">Directory and map of local producers</p>
+            <ul>
+              <li class="plus">+ Shows who the producer is and where</li>
+              <li class="minus">− No ordering: you leave the site to buy</li>
+              <li class="minus">− Czech only, crowded map</li>
+            </ul>
+          </div>
+          <div class="card comp">
+            <h3>📱 Farm social pages</h3>
+            <p class="muted" style="margin: 0; font-size: 16px">Ordering over Facebook / Instagram messages</p>
+            <ul>
+              <li class="plus">+ Personal, trustworthy</li>
+              <li class="minus">− No cart, no prices, no confirmation</li>
+              <li class="minus">− One farm = one separate order</li>
+            </ul>
+          </div>
+        </div>
+        <div class="card" style="margin-top: 22px">
+          <p style="margin: 0">
+            <b>Method:</b> think-aloud test with 5 tasks based on UC1–UC5 and our 3 personas, problems rated on Nielsen's severity
+            scale (0–4) and linked to his 10 usability heuristics.
+          </p>
+        </div>
+      </section>
+
+      <!-- 7 · PROBLEMS -->
+      <section class="slide" data-title="Problems">
+        <span class="draft">Draft: check against your Exercise 2 study</span>
+        <p class="kicker">Exercise 3 · Step 1</p>
+        <h2>Main usability problems found</h2>
+        <table>
+          <thead>
+            <tr><th>#</th><th>Problem</th><th>Seen in</th><th>Heuristic</th><th>Severity</th></tr>
+          </thead>
+          <tbody id="problem-table"></tbody>
+        </table>
+      </section>
+
+      <!-- 8 · PROBLEM → SOLUTION (interactive) -->
+      <section class="slide" data-title="Solutions">
+        <p class="kicker">Exercise 3 · Step 2 · interactive</p>
+        <h2>Each problem → our solution</h2>
+        <div class="ps">
+          <div class="ps-list" id="ps-list"></div>
+          <div class="ps-detail">
+            <div class="ps-box problem"><h4>❌ Problem</h4><p id="ps-problem"></p></div>
+            <div class="ps-box solution"><h4>✅ FreshRoots solution</h4><p id="ps-solution"></p></div>
+            <div class="ps-foot">
+              <p class="muted" id="ps-meta"></p>
+              <a class="btn primary" id="ps-link" target="_blank" rel="noopener">See it in the prototype ↗</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9 · USE CASE BEFORE/AFTER (interactive) -->
+      <section class="slide" data-title="Improved flow">
+        <span class="draft">Draft: competitor steps from your test notes</span>
+        <p class="kicker">Exercise 3 · Improved use case</p>
+        <h2 style="font-size: 32px; margin-bottom: 14px">UC1 + UC3 + UC4: “Buy vegetables from a farm within 5 km for Friday evening”</h2>
+        <div class="flow-toggle">
+          <button class="btn" data-flow="play">▶ Play comparison</button>
+          <button class="btn" data-flow="reset">↺ Reset</button>
+        </div>
+        <div class="flows">
+          <div class="flow">
+            <h3>Competitors (Scuk.cz → Facebook) <em id="n-old">0</em></h3>
+            <ol id="flow-old"></ol>
+          </div>
+          <div class="flow ours">
+            <h3>FreshRoots <em id="n-new">0</em></h3>
+            <ol id="flow-new"></ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10 · AI PROCESS -->
+      <section class="slide" data-title="AI process">
+        <p class="kicker">Exercise 3 · Step 3</p>
+        <h2>Generating two GUI concepts with AI</h2>
+        <div class="steps">
+          <span>Problems + personas</span><i>→</i><span>Design brief</span><i>→</i><span>Prompt A / Prompt B</span><i>→</i>
+          <span>ChatGPT image generation</span><i>→</i><span>Compare</span><i>→</i><span>Build in HTML/CSS/JS</span>
+        </div>
+        <div class="grid2 grow">
+          <div>
+            <h3>Prompt · Version A: “Map-first”</h3>
+            <pre>Desktop web UI mockup for "FreshRoots Cooperative", an online marketplace
+connecting local farmers near Prague with city consumers. MAP-FIRST layout:
+a large interactive map fills 60% of the screen with farm pins and 5 km /
+10 km distance rings; a sidebar lists farms sorted by distance; selecting a
+farm shows its products. Green #2d5a3d + cream palette, rounded cards,
+clean modern typography, header with a 5-language switcher.</pre>
+          </div>
+          <div>
+            <h3>Prompt · Version B: “Catalog-first”</h3>
+            <pre>Same brand and palette. CATALOG-FIRST layout: hero banner with a big search
+bar, category chips (fruit, vegetables, dairy, eggs, bakery) and a distance
+filter; a product grid where EVERY card shows farm name, distance, organic
+badge, price per unit and an Add-to-cart button that turns into a quantity
+stepper. A cart summary shows the delivery fee and a free-delivery progress
+bar. Header with a 5-language switcher.</pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11 · GUI A vs B (interactive) -->
+      <section class="slide" data-title="GUI A vs B">
+        <p class="kicker">Exercise 3 · Two concepts · interactive</p>
+        <h2 id="gui-title">Version A: Map-first</h2>
+        <div class="gui">
+          <div>
+            <div class="mock" id="mock-a">
+              <div class="bar"><i></i><i></i><i></i></div>
+              <div class="hdr">🥕 FreshRoots <small>EN · CS · DE · 简 · 繁 &nbsp; 🛒 2</small></div>
+              <div class="body" style="grid-template-rows: auto 1fr">
+                <div class="m-search">🔍 Search farms near you…</div>
+                <div class="m-split">
+                  <div class="m-map">
+                    <div class="m-ring" style="width: 130px; height: 130px"></div>
+                    <div class="m-ring" style="width: 250px; height: 250px"></div>
+                    <span class="m-pin" style="left: 49%; top: 47%">🔵</span>
+                    <span class="m-pin" style="left: 58%; top: 36%">📍</span>
+                    <span class="m-pin" style="left: 38%; top: 40%">📍</span>
+                    <span class="m-pin" style="left: 66%; top: 58%">📍</span>
+                    <span class="m-pin" style="left: 42%; top: 68%">📍</span>
+                    <span class="m-pin" style="left: 48%; top: 16%">📍</span>
+                  </div>
+                  <div class="m-list">
+                    <b>Farms by distance</b>
+                    <div class="m-farm on"><img src="img/farm2.jpg" alt="" /><span><b>Green Valley</b><br />2.3 km · veg</span></div>
+                    <div class="m-farm"><img src="img/carrots.jpg" alt="" /><span><b>Root Harvest</b><br />3.0 km · veg</span></div>
+                    <div class="m-farm"><img src="img/eggs.jpg" alt="" /><span><b>Free Range</b><br />4.1 km · eggs</span></div>
+                    <div class="m-farm"><img src="img/farm3.jpg" alt="" /><span><b>Sunny Acres</b><br />4.7 km · veg</span></div>
+                    <div class="m-farm"><img src="img/organic.jpg" alt="" /><span><b>Berry Best</b><br />5.0 km · fruit</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="mock" id="mock-b" hidden>
+              <div class="bar"><i></i><i></i><i></i></div>
+              <div class="hdr">🥕 FreshRoots <small>Home · Products · Farms &amp; Map &nbsp; EN · CS · DE · 简 · 繁 &nbsp; 🛒 3</small></div>
+              <div class="body" style="grid-template-rows: auto auto auto 1fr">
+                <div class="m-hero">Connecting Local Farmers with Consumers</div>
+                <div class="m-search">🔍 Search products or farms…</div>
+                <div class="m-chips">
+                  <span class="on">All</span><span>🍓 Fruits</span><span>🥕 Vegetables</span><span>🥛 Dairy</span><span>🥚 Eggs</span
+                  ><span>📍 &lt; 5 km</span><span>🌱 Organic</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 120px; gap: 8px">
+                  <div class="m-grid">
+                    <div class="m-card"><img src="img/tomato.jpg" alt="" /><div>Organic Tomatoes<div class="f">Green Valley · 2.3 km</div><div class="p">€4.99 / kg</div><div class="b">− 2 in cart +</div></div></div>
+                    <div class="m-card"><img src="img/strawberry.jpg" alt="" /><div>Strawberries<div class="f">Berry Best · 5.0 km</div><div class="p">€4.99 / box</div><div class="b">Add to cart</div></div></div>
+                    <div class="m-card"><img src="img/milk.jpg" alt="" /><div>Farm Milk<div class="f">Happy Cows · 6.1 km</div><div class="p">€1.89 / L</div><div class="b">− 1 in cart +</div></div></div>
+                    <div class="m-card"><img src="img/eggs.jpg" alt="" /><div>Free-Range Eggs<div class="f">Free Range · 4.1 km</div><div class="p">€3.49 / 10 pcs</div><div class="b">Add to cart</div></div></div>
+                  </div>
+                  <div class="m-cart">
+                    <b>Your cart</b><br />Subtotal €11.87<br />Delivery €3.00
+                    <div class="barx"><i></i></div>
+                    <span style="font-size: 9.5px">€18.13 more → free delivery</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="gui-side">
+            <div class="ab-toggle">
+              <button class="btn on" data-gui="a">Version A</button>
+              <button class="btn" data-gui="b">Version B</button>
+            </div>
+            <div id="gui-notes"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12 · EVALUATION (interactive) -->
+      <section class="slide" data-title="Evaluation">
+        <p class="kicker">Exercise 3 · Choosing a direction · interactive</p>
+        <h2>Weighted evaluation: drag the weights</h2>
+        <div class="eval">
+          <table>
+            <thead>
+              <tr><th>Criterion</th><th>Weight</th><th style="text-align: center">A · Map</th><th style="text-align: center">B · Catalog</th></tr>
+            </thead>
+            <tbody id="eval-body"></tbody>
+          </table>
+          <div class="totals">
+            <div class="tbar" id="tbar-a"><b>Version A: Map-first</b><div class="track"><div class="fill"></div></div></div>
+            <div class="tbar" id="tbar-b"><b>Version B: Catalog-first</b><div class="track"><div class="fill"></div></div></div>
+            <div class="verdict" id="verdict"></div>
+            <p class="muted" style="font-size: 16px; margin: 0">Scores are 1–5, agreed by the team. A total is the sum of weight × score, shown as a % of the maximum possible.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13 · CHOSEN DESIGN -->
+      <section class="slide" data-title="Chosen design">
+        <p class="kicker">Decision</p>
+        <h2>We chose B (catalog-first) and kept A's map as its own page</h2>
+        <ul class="feat">
+          <li><b class="tag">P1</b> Every product card shows farm, distance and an organic badge</li>
+          <li><b class="tag">P2</b> Distance filter (3 / 5 / 10 km) and an interactive map with 5 / 10 km rings</li>
+          <li><b class="tag">P3</b> Delivery fee and free-delivery progress visible in the cart</li>
+          <li><b class="tag">P4</b> Full UI in 5 languages, remembered between visits</li>
+          <li><b class="tag">P5</b> “Add to cart” becomes a quantity stepper; cart badge animates; toast messages confirm actions</li>
+          <li><b class="tag">P6</b> “Send message” to the farmer and “Follow farm” right on the farm page</li>
+          <li><b class="tag">P7</b> Choose a 2-hour delivery slot in checkout</li>
+          <li><b class="tag">P8</b> Large cards, clear hierarchy, keyboard support and visible focus</li>
+          <li><b class="tag">+</b> Cart grouped by farm, so it's clear who you are buying from</li>
+          <li><b class="tag">P9</b> Farmer portal: orders, stock and messages in one place (see next slide)</li>
+        </ul>
+        <div class="grow"></div>
+        <div class="card" style="display: flex; gap: 18px; align-items: center">
+          <span style="font-size: 38px">🛠️</span>
+          <p style="margin: 0">Built with <b>plain HTML, CSS and JavaScript</b>: hash routing, data stored as JS objects, and cart, account and language saved in <code>localStorage</code>. No framework and no server needed.</p>
+        </div>
+      </section>
+
+      <!-- NEW · TWO-SIDED PLATFORM (interactive) -->
+      <section class="slide" data-title="Two-sided platform">
+        <span class="draft">Draft: farmer persona, check with a real farmer if possible</span>
+        <p class="kicker">Exercise 4 · From shop to platform · interactive</p>
+        <h2>One platform, two kinds of users</h2>
+        <div class="loop-steps" id="loop-steps"></div>
+        <div class="card loop-detail">
+          <div class="big-ic" id="loop-ic"></div>
+          <div><h3 id="loop-title"></h3><p id="loop-text"></p></div>
+          <a class="btn primary" id="loop-link" target="_blank" rel="noopener">Try it ↗</a>
+        </div>
+        <div class="grid2" style="margin-top: 18px">
+          <div class="card persona" style="flex-direction: row; gap: 16px; align-items: flex-start">
+            <span class="avatar">🧑‍🌾</span>
+            <div>
+              <h3>New persona · James, 52</h3>
+              <p class="meta" style="margin: 0 0 4px">Owner of Green Valley Farm · uses his phone between field work</p>
+              <p style="margin: 0; font-size: 16.5px"><b>Goal:</b> sell directly to city customers and update stock in 2 minutes.<br /><b>Frustration:</b> orders scattered across calls, SMS and Facebook.</p>
+            </div>
+          </div>
+          <div class="card">
+            <h3>Why it matters</h3>
+            <p style="margin: 0; font-size: 17px">The cooperative is a marketplace, so it only works if <b>farmers</b> find it easy too. Each step above is shared data: when a customer orders, stock drops, and when the farmer changes a status, the customer sees it.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- NEW · ACCOUNT + PORTAL FEATURES -->
+      <section class="slide" data-title="Account & portal">
+        <p class="kicker">Exercise 4 · What we built</p>
+        <h2>Customer account and farmer portal</h2>
+        <div class="two-col-feat">
+          <div class="card">
+            <h3>👤 My account (customer)</h3>
+            <ul>
+              <li>📦 <b>Order history</b> with a 4-step status tracker for each farm</li>
+              <li>🔁 <b>Order again</b> in one click, keeping within available stock</li>
+              <li>⭐ <b>Followed farms</b></li>
+              <li>💬 <b>Messages</b> to farmers, with their replies</li>
+              <li>🏠 <b>Profile and default address</b>, which pre-fills checkout (Anna's checkout gets faster)</li>
+              <li>⏳ Shop shows <b>“Only 3 left”</b> and <b>“Sold out”</b>; you can't add more than the stock</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🧑‍🌾 Farmer portal</h3>
+            <ul>
+              <li>📊 <b>Overview:</b> products on sale, low stock, open orders, revenue, unanswered messages</li>
+              <li>🥕 <b>Product table:</b> edit price and stock in place, on-sale switch, delete</li>
+              <li>➕ <b>Add a product</b> with validation and an optional Czech name</li>
+              <li>📦 <b>Orders:</b> only this farm's part, with address and slot, plus status buttons</li>
+              <li>💬 <b>Reply</b> to customer questions</li>
+              <li>↺ <b>Reset demo data</b> before each presentation</li>
+            </ul>
+          </div>
+        </div>
+        <div class="login-strip">
+          <b>Demo logins:</b>
+          <span>customer <code>anna@example.com / demo123</code></span>
+          <span>farmer <code>hello@greenvalley.example / farm123</code></span>
+          <span class="muted">· all of this works in all 5 languages</span>
+        </div>
+      </section>
+
+      <!-- 14 · LIVE DEMO -->
+      <section class="slide" data-title="Live demo">
+        <p class="kicker">Exercise 4 preview · live</p>
+        <h2 style="margin-bottom: 14px">Live prototype: try it here</h2>
+        <div class="demo">
+          <iframe id="demo-frame" title="FreshRoots prototype" loading="lazy" data-src="FreshRoots_Cooperative.html#/home"></iframe>
+          <div class="demo-nav" id="demo-nav">
+            <button data-route="#/home" class="on">🏠 Home</button>
+            <button data-route="#/browse">🔍 Browse + filters</button>
+            <button data-route="#/map">📍 Map</button>
+            <button data-route="#/farm/green-valley">👩‍🌾 Farm profile</button>
+            <button data-route="#/cart">🛒 Cart</button>
+            <button data-route="?demo=customer#/account/orders">👤 As customer: my orders</button>
+            <button data-route="?demo=farmer#/farmer">🧑‍🌾 As farmer: portal</button>
+            <button data-route="?demo=farmer#/farmer/orders">📦 Farmer: orders</button>
+            <a class="btn" href="login.html" target="_blank" rel="noopener" style="text-align: center">🔑 Login page ↗</a>
+            <a class="btn primary" href="FreshRoots_Cooperative.html" target="_blank" rel="noopener" style="text-align: center">Open full screen ↗</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15 · NEXT STEPS -->
+      <section class="slide" data-title="Next steps">
+        <p class="kicker">Exercises 5–6</p>
+        <h2>Next steps</h2>
+        <div class="grid3 grow" style="align-content: start">
+          <div class="card">
+            <h3>🧪 Test both sides</h3>
+            <p>Customers: the same 5 tasks we gave on the competitor apps (time, errors, SUS score). Farmers: “add a product”, “mark an order as delivered”, “answer a question”. Compare the results with the competitors.</p>
+          </div>
+          <div class="card">
+            <h3>🔧 Improve</h3>
+            <p>Fix what the tests find. Ideas: product detail pages, “notify me” when a seasonal product is back, e-mail/SMS when an order status changes, prices in CZK.</p>
+          </div>
+          <div class="card">
+            <h3>♿ Polish</h3>
+            <p>Accessibility check (contrast, screen reader), mobile testing on real phones, and a native-speaker review of all 5 translations.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 16 · END -->
+      <section class="slide end-slide" data-title="Thank you">
+        <h1>Thank you!</h1>
+        <p>Questions? Let's try the prototype together.</p>
+        <p style="font-size: 18px; margin-top: 30px">Zhang Yiwen · Chien Ching Wen · Huong Huong Nguyen</p>
+      </section>
+
+      <div id="progress"></div>
+      <div id="controls">
+        <button id="prev" aria-label="Previous slide">‹</button>
+        <span id="counter">1 / 16</span>
+        <button id="next" aria-label="Next slide">›</button>
+      </div>
+    </div>
+    <div id="help">← → / Space to navigate · F for full screen · Home / End</div>
+
+    <script>
+      "use strict";
+      const $ = (s, r = document) => r.querySelector(s);
+      const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+      /* ───── data ───── */
+      const PROBLEMS = [
+        {
+          id: "P1",
+          short: "Product origin is hidden",
+          where: "Rohlik.cz",
+          heur: "H2 Match with real world",
+          sev: 3,
+          problem: "Product listings don't show which farm the food comes from or how far away it is. “Local” is only a label.",
+          solution: "Every product card shows the farm name (as a link), the distance in km and an organic badge. Clicking the farm opens its profile.",
+          route: "#/browse",
+          uc: "UC1, UC2",
+        },
+        {
+          id: "P2",
+          short: "Can't filter by distance",
+          where: "Rohlik.cz, Scuk.cz",
+          heur: "H7 Flexibility & efficiency",
+          sev: 3,
+          problem: "Users can't limit results to nearby farms. The producer map and the shop are separate tools.",
+          solution: "A 3 / 5 / 10 km distance filter in Browse, plus an interactive map with 5 / 10 km rings and farm-type filters that lead straight to each farm's products.",
+          route: "#/map",
+          uc: "UC1",
+        },
+        {
+          id: "P3",
+          short: "Total cost unclear until checkout",
+          where: "Farm social pages, Rohlik.cz",
+          heur: "H1 Visibility of system status",
+          sev: 3,
+          problem: "The delivery fee and the final total appear only at the last step, or have to be asked for in a message.",
+          solution: "The cart always shows subtotal, delivery fee and total, with a progress bar showing how much more is needed for free delivery.",
+          route: "#/cart",
+          uc: "UC3",
+        },
+        {
+          id: "P4",
+          short: "Czech only / partial translation",
+          where: "Scuk.cz, farm pages",
+          heur: "H2 Match with real world",
+          sev: 4,
+          problem: "International users (persona Lin) can't read product names, units or error messages.",
+          solution: "The whole UI, product names, farm stories, units, validation errors and dates work in EN / CS / DE / 简体 / 繁體. Switching is one click and is remembered.",
+          route: "#/home",
+          uc: "UC5",
+        },
+        {
+          id: "P5",
+          short: "Weak feedback after “add to cart”",
+          where: "Scuk.cz (no cart), farm pages",
+          heur: "H1 Visibility of system status",
+          sev: 2,
+          problem: "Users aren't sure whether an item was added or how many are already in the cart.",
+          solution: "The button turns into a quantity stepper showing “2 in cart”. The cart badge animates and a toast message confirms the action.",
+          route: "#/browse",
+          uc: "UC3",
+        },
+        {
+          id: "P6",
+          short: "Contacting the farmer means leaving the site",
+          where: "Scuk.cz",
+          heur: "H3 User control & freedom",
+          sev: 2,
+          problem: "To ask a farmer a question, users have to copy a phone number or switch to Facebook.",
+          solution: "Each farm profile has “Send message” (an in-app dialog) and “Follow farm”, next to phone, email and Instagram.",
+          route: "#/farm/green-valley",
+          uc: "UC2",
+        },
+        {
+          id: "P7",
+          short: "Delivery time hard to choose",
+          where: "Farm social pages",
+          heur: "H7 Flexibility & efficiency",
+          sev: 2,
+          problem: "Delivery is agreed in chat messages, and there is no confirmation of when food will arrive.",
+          solution: "Checkout offers 2-hour slots for the next 3 days. The confirmation page shows the order number, slot and farms.",
+          route: "#/checkout",
+          uc: "UC4",
+        },
+        {
+          id: "P8",
+          short: "Cluttered layout, small text",
+          where: "Scuk.cz",
+          heur: "H8 Aesthetic & minimalist design",
+          sev: 2,
+          problem: "A crowded map and small links are hard for older users (persona Martin).",
+          solution: "Large cards, one clear navigation bar, 16 px+ text, visible keyboard focus, and form errors explained next to each field.",
+          route: "#/home",
+          uc: "All",
+        },
+        {
+          id: "P9",
+          short: "No tools for farmers to manage orders",
+          where: "Farm social pages",
+          heur: "H6 Recognition rather than recall",
+          sev: 3,
+          problem: "Farmers collect orders from phone calls, SMS and Facebook messages, keep stock in their heads and agree delivery times one by one.",
+          solution: "Farmer portal: one list of orders with address and slot, one-click status updates, live stock that updates the shop instantly, and replies to customer questions.",
+          route: "?demo=farmer#/farmer/orders",
+          uc: "UC7, UC8",
+        },
+      ];
+
+      const FLOW_OLD = [
+        ["Open Scuk.cz, browse the map of producers", 0],
+        ["Zoom in to find farms near home (no km filter)", 1],
+        ["Open 3 farm pages to see what they sell", 1],
+        ["No prices online, so find the farm's Facebook page", 1],
+        ["Send a message asking for prices and stock", 1],
+        ["Wait for a reply (hours or a day)", 1],
+        ["Agree on quantity by message", 0],
+        ["Agree on a delivery time by message", 1],
+        ["Repeat for a 2nd farm (milk)", 1],
+      ];
+      const FLOW_NEW = [
+        ["Browse → filter 🥕 Vegetables + 📍 5 km", 0],
+        ["Add to cart; the button becomes a quantity stepper", 0],
+        ["Add milk from another farm to the same cart", 0],
+        ["Cart: see total, fee and free-delivery progress", 0],
+        ["Checkout: choose a Friday 17:00–19:00 slot and confirm", 0],
+      ];
+
+      const GUI_NOTES = {
+        a: {
+          title: "Version A: Map-first",
+          pros: ["Strong “know your farmer” story", "Distance is very clear", "Good for exploring"],
+          cons: [
+            "Products are 2 clicks away: slow for Anna",
+            "Maps are hard on small phones",
+            "Unfamiliar for shopping, so it takes longer to learn",
+            "Prices and cart are hidden at first",
+          ],
+        },
+        b: {
+          title: "Version B: Catalog-first",
+          pros: [
+            "Familiar e-shop pattern, so it's quick to learn",
+            "Farm + distance on every card fixes P1",
+            "Price, stepper and fee in view fix P3 and P5",
+            "Works well on mobile",
+          ],
+          cons: ["The farm story is less prominent", "Map is not on the first screen"],
+        },
+      };
+
+      const CRITERIA = [
+        ["Fits Anna: speed, mobile", 3, 2, 5],
+        ["Fits Martin: trust, clarity", 3, 4, 4],
+        ["Fits Lin: language, price", 2, 3, 4],
+        ["Solves problems P1–P8", 3, 3, 5],
+        ["Learnability (familiar pattern)", 2, 2, 5],
+        ["Farm transparency / story", 2, 5, 3],
+        ["Implementation effort (5 = easy)", 1, 2, 4],
+      ];
+
+      /* ───── build dynamic parts ───── */
+      $("#problem-table").innerHTML = PROBLEMS.map(
+        (p) =>
+          `<tr><td><b>${p.id}</b></td><td>${p.short}</td><td>${p.where}</td><td>${p.heur}</td><td><span class="sev" title="${p.sev}/4">${[1, 2, 3, 4]
+            .map((i) => `<i class="${i <= p.sev ? "on" : ""}"></i>`)
+            .join("")}</span> ${p.sev}</td></tr>`
+      ).join("");
+
+      $("#ps-list").innerHTML = PROBLEMS.map((p, i) => `<button data-ps="${i}"><b>${p.id}</b>${p.short}</button>`).join("");
+      function showPS(i) {
+        const p = PROBLEMS[i];
+        $$("#ps-list button").forEach((b, k) => b.classList.toggle("on", k === i));
+        $("#ps-problem").textContent = p.problem;
+        $("#ps-solution").textContent = p.solution;
+        $("#ps-meta").textContent = `Seen in: ${p.where} · ${p.heur} · Use case: ${p.uc}`;
+        $("#ps-link").href = "FreshRoots_Cooperative.html" + p.route;
+      }
+      $("#ps-list").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (b) showPS(Number(b.dataset.ps));
+      });
+      showPS(0);
+
+      const renderFlow = (el, steps) =>
+        (el.innerHTML = steps.map(([s, pain], i) => `<li class="${pain ? "pain" : ""}">${i + 1}. ${s}${pain ? " 😣" : ""}</li>`).join(""));
+      renderFlow($("#flow-old"), FLOW_OLD);
+      renderFlow($("#flow-new"), FLOW_NEW);
+      let flowTimers = [];
+      function resetFlow() {
+        flowTimers.forEach(clearTimeout);
+        flowTimers = [];
+        $$(".flow li").forEach((li) => li.classList.remove("show"));
+        $("#n-old").textContent = "0";
+        $("#n-new").textContent = "0";
+      }
+      function playFlow() {
+        resetFlow();
+        const olds = $$("#flow-old li");
+        const news = $$("#flow-new li");
+        const max = Math.max(olds.length, news.length);
+        for (let i = 0; i < max; i++) {
+          flowTimers.push(
+            setTimeout(() => {
+              if (olds[i]) {
+                olds[i].classList.add("show");
+                $("#n-old").textContent = i + 1 + " steps";
+              }
+              if (news[i]) {
+                news[i].classList.add("show");
+                $("#n-new").textContent = i + 1 + " steps";
+              }
+            }, 380 * i)
+          );
+        }
+      }
+      $(".flow-toggle").addEventListener("click", (e) => {
+        const b = e.target.closest("button");
+        if (!b) return;
+        b.dataset.flow === "play" ? playFlow() : resetFlow();
+      });
+
+      function showGui(v) {
+        $("#mock-a").hidden = v !== "a";
+        $("#mock-b").hidden = v !== "b";
+        $$("[data-gui]").forEach((b) => b.classList.toggle("on", b.dataset.gui === v));
+        const n = GUI_NOTES[v];
+        $("#gui-title").textContent = n.title;
+        $("#gui-notes").innerHTML = `<div class="card"><h3>👍 Strengths</h3><ul>${n.pros
+          .map((x) => `<li>✅ ${x}</li>`)
+          .join("")}</ul></div><div class="card" style="margin-top:14px"><h3>👎 Weaknesses</h3><ul>${n.cons
+          .map((x) => `<li>⚠️ ${x}</li>`)
+          .join("")}</ul></div>`;
+      }
+      $(".ab-toggle").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-gui]");
+        if (b) showGui(b.dataset.gui);
+      });
+      showGui("a");
+
+      $("#eval-body").innerHTML = CRITERIA.map(
+        ([name, w, a, b], i) =>
+          `<tr><td>${name}</td><td class="w"><input type="range" min="0" max="5" value="${w}" data-crit="${i}" aria-label="Weight: ${name}"/> <output>${w}</output></td>
+           <td class="score ${a > b ? "win" : ""}">${a}</td><td class="score ${b > a ? "win" : ""}">${b}</td></tr>`
+      ).join("");
+      function calcEval() {
+        let ta = 0,
+          tb = 0,
+          max = 0;
+        $$("#eval-body input").forEach((inp) => {
+          const [, , a, b] = CRITERIA[Number(inp.dataset.crit)];
+          const w = Number(inp.value);
+          inp.nextElementSibling.textContent = w;
+          ta += w * a;
+          tb += w * b;
+          max += w * 5;
+        });
+        const pa = max ? Math.round((ta / max) * 100) : 0;
+        const pb = max ? Math.round((tb / max) * 100) : 0;
+        const fa = $("#tbar-a .fill"),
+          fb = $("#tbar-b .fill");
+        fa.style.width = pa + "%";
+        fa.textContent = pa + "%";
+        fb.style.width = pb + "%";
+        fb.textContent = pb + "%";
+        $("#tbar-a").classList.toggle("win", pa > pb);
+        $("#tbar-b").classList.toggle("win", pb > pa);
+        $("#verdict").textContent = pb > pa ? "🏆 Version B wins" : pa > pb ? "🏆 Version A wins" : "🤝 Tie";
+      }
+      $("#eval-body").addEventListener("input", calcEval);
+      calcEval();
+
+      const frame = $("#demo-frame");
+      $("#demo-nav").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-route]");
+        if (!b) return;
+        $$("#demo-nav button").forEach((x) => x.classList.toggle("on", x === b));
+        frame.src = "FreshRoots_Cooperative.html" + b.dataset.route;
+      });
+
+      const LOOP = [
+        ["🛒", "Customer", "cust", "Anna orders", "Anna puts tomatoes and eggs from two farms in one cart and picks Friday 17:00–19:00.", "?demo=customer#/browse"],
+        ["📉", "Shop", "cust", "Stock updates", "Stock goes down automatically. The shop shows “Only 2 left” or “Sold out”, and nobody can order more than there is.", "#/browse"],
+        ["📦", "Farmer", "farm", "Farmer gets the order", "Green Valley sees only its own part of the order, with the customer's address, phone and delivery slot.", "?demo=farmer#/farmer/orders"],
+        ["🚚", "Farmer", "farm", "Status update", "One click moves the order along: New → Preparing → Out for delivery → Delivered.", "?demo=farmer#/farmer/orders"],
+        ["📍", "Customer", "cust", "Customer tracks it", "In “My orders”, Anna sees a tracker for each farm and can order the same basket again with one click.", "?demo=customer#/account/orders"],
+        ["💬", "Both", "farm", "Conversation", "Anna asks a question on the farm page. James replies in the portal, and the reply appears in Anna's account.", "?demo=farmer#/farmer/messages"],
+      ];
+      $("#loop-steps").innerHTML = LOOP.map(
+        ([ic, who, cls, title], i) => `<button class="${cls}" data-loop="${i}"><span>${ic}</span><small>${who}</small>${title}</button>`
+      ).join("");
+      function showLoop(i) {
+        const [ic, , , title, text, route] = LOOP[i];
+        $$("#loop-steps button").forEach((b, k) => b.classList.toggle("on", k === i));
+        $("#loop-ic").textContent = ic;
+        $("#loop-title").textContent = i + 1 + ". " + title;
+        $("#loop-text").textContent = text;
+        $("#loop-link").href = "FreshRoots_Cooperative.html" + route;
+      }
+      $("#loop-steps").addEventListener("click", (e) => {
+        const b = e.target.closest("[data-loop]");
+        if (b) showLoop(Number(b.dataset.loop));
+      });
+      showLoop(0);
+
+      /* ───── deck engine ───── */
+      const slides = $$(".slide");
+      let cur = 0;
+      $("#counter").textContent = `1 / ${slides.length}`;
+
+      function go(n, fromHash) {
+        n = Math.max(0, Math.min(slides.length - 1, n));
+        cur = n;
+        slides.forEach((s, i) => {
+          s.classList.toggle("active", i === n);
+          s.classList.toggle("past", i < n);
+          s.setAttribute("aria-hidden", i !== n);
+        });
+        $("#counter").textContent = `${n + 1} / ${slides.length}`;
+        $("#progress").style.width = ((n + 1) / slides.length) * 100 + "%";
+        $("#prev").disabled = n === 0;
+        $("#next").disabled = n === slides.length - 1;
+        const s = slides[n];
+        if (s.contains(frame) && !frame.src) frame.src = frame.dataset.src;
+        if (s.querySelector("#flow-old")) setTimeout(playFlow, 450);
+        if (!fromHash) history.replaceState(null, "", "#" + (n + 1));
+      }
+
+      $("#prev").addEventListener("click", () => go(cur - 1));
+      $("#next").addEventListener("click", () => go(cur + 1));
+
+      document.addEventListener("keydown", (e) => {
+        const tag = (e.target.tagName || "").toLowerCase();
+        if (tag === "input" || tag === "textarea" || tag === "select") return;
+        if (["ArrowRight", "PageDown"].includes(e.key) || (e.key === " " && tag !== "button")) {
+          e.preventDefault();
+          go(cur + 1);
+        } else if (["ArrowLeft", "PageUp"].includes(e.key)) {
+          e.preventDefault();
+          go(cur - 1);
+        } else if (e.key === "Home") go(0);
+        else if (e.key === "End") go(slides.length - 1);
+        else if (e.key === "f" || e.key === "F") {
+          if (!document.fullscreenElement) document.documentElement.requestFullscreen?.();
+          else document.exitFullscreen?.();
+        }
+      });
+
+      // touch swipe
+      let tx = null;
+      document.addEventListener("touchstart", (e) => (tx = e.touches[0].clientX), { passive: true });
+      document.addEventListener("touchend", (e) => {
+        if (tx == null) return;
+        const dx = e.changedTouches[0].clientX - tx;
+        if (Math.abs(dx) > 60 && !e.target.closest("iframe, input")) go(cur + (dx < 0 ? 1 : -1));
+        tx = null;
+      });
+
+      function fit() {
+        const s = Math.min(window.innerWidth / 1280, window.innerHeight / 720);
+        $("#stage").style.transform = `translate(-50%, -50%) scale(${s})`;
+      }
+      window.addEventListener("resize", fit);
+      fit();
+
+      const start = parseInt(location.hash.slice(1), 10);
+      go(Number.isFinite(start) ? start - 1 : 0, true);
+    </script>
+  </body>
+</html>

@@ -1,138 +1,159 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - FreshRoots Cooperative</title>
-    <link rel="stylesheet" href="style.css">
-    <style>
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
-            background: white;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-        }
-        
-        .login-header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .login-header img {
-            width: 150px;
-            margin-bottom: 20px;
-        }
-        
-        .login-header h2 {
-            color: #2d5a3d;
-            margin: 0;
-        }
-        
-        .login-form {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-        
-        .form-group label {
-            font-weight: bold;
-            color: #333;
-        }
-        
-        .form-group input {
-            padding: 12px;
-            border: 2px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            font-family: Verdana;
-        }
-        
-        .form-group input:focus {
-            outline: none;
-            border-color: #2d5a3d;
-        }
-        
-        .login-btn {
-            background: #2d5a3d;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-        
-        .login-btn:hover {
-            background: #234a31;
-        }
-        
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            color: #666;
-        }
-        
-        .register-link a {
-            color: #2d5a3d;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-        
-        .back-home {
-            text-align: center;
-            margin-top: 20px;
-        }
-        
-        .back-home a {
-            color: #2d5a3d;
-            text-decoration: none;
-        }
-    </style>
-</head>
-<body>
-    <div class="login-container">
-        <div class="login-header">
-            <img src="img/logo.png" alt="FreshRoots Logo">
-            <h2>Welcome Back!</h2>
-            <p>Login to your FreshRoots account</p>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Log in — FreshRoots Cooperative</title>
+    <link rel="icon" href="img/logo.png" />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body class="auth-page">
+    <div class="lang-bar" id="lang-bar" role="group" aria-label="Language"></div>
+
+    <div class="auth-wrap">
+      <div class="auth-card card">
+        <img class="brand-logo" src="img/logo.png" alt="FreshRoots" />
+        <h1 id="auth-title"></h1>
+        <p class="sub" id="auth-sub"></p>
+
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" id="tab-login" data-mode="login" data-i18n="tab_login">Log in</button>
+          <button type="button" role="tab" id="tab-register" data-mode="register" data-i18n="tab_register">Register</button>
         </div>
-        
-        <form class="login-form">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" placeholder="your.email@example.com" required>
-            </div>
-            
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" placeholder="Enter your password" required>
-            </div>
-            
-            <a href="index.html">
-                <button type="button" class="login-btn">Login</button>
-            </a>
-            
-            <div class="register-link">
-                Don't have an account? <a href="register.html">Register here</a>
-            </div>
+
+        <form class="auth-form" id="auth-form" novalidate>
+          <label class="field" id="row-name" hidden>
+            <span class="field-label" data-i18n="f_name">Full name</span>
+            <input type="text" id="f-name" autocomplete="name" />
+            <small class="err" id="e-name"></small>
+          </label>
+          <label class="field">
+            <span class="field-label" data-i18n="f_email">Email address</span>
+            <input type="email" id="f-email" autocomplete="email" placeholder="your.email@example.com" />
+            <small class="err" id="e-email"></small>
+          </label>
+          <label class="field">
+            <span class="field-label" data-i18n="f_password">Password</span>
+            <input type="password" id="f-pw" autocomplete="current-password" />
+            <small class="err" id="e-pw"></small>
+          </label>
+          <label class="field" id="row-pw2" hidden>
+            <span class="field-label" data-i18n="f_password2">Confirm password</span>
+            <input type="password" id="f-pw2" autocomplete="new-password" />
+            <small class="err" id="e-pw2"></small>
+          </label>
+          <p class="err" id="e-form" role="alert"></p>
+          <button type="submit" class="btn btn-primary btn-block btn-lg" id="submit-btn"></button>
+          <div class="hint" id="demo-hint">
+            <div id="hint-customer"></div>
+            <div id="hint-farmer"></div>
+          </div>
         </form>
-        
-        <div class="back-home">
-            <a href="FreshRoots_Cooperative.html">← Back to Home</a>
-        </div>
+
+        <p class="auth-back"><a href="FreshRoots_Cooperative.html#/home" data-i18n="back_home_link">← Back to home</a></p>
+      </div>
     </div>
-</body>
+
+    <script src="i18n.js"></script>
+    <script src="data.js"></script>
+    <script>
+      "use strict";
+      ensureDemoData();
+      const DEMO = DEMO_CUSTOMER;
+      const DEMO_FARM = FARMS[0];
+      let users = FRStore.get("fr_users", []);
+
+      let mode = location.hash === "#register" ? "register" : "login";
+      const $ = (s) => document.querySelector(s);
+
+      function paint() {
+        const reg = mode === "register";
+        $("#auth-title").textContent = t(reg ? "register_title" : "login_title");
+        $("#auth-sub").textContent = t(reg ? "register_sub" : "login_sub");
+        $("#submit-btn").textContent = t(reg ? "btn_register" : "btn_login");
+        $("#row-name").hidden = !reg;
+        $("#row-pw2").hidden = !reg;
+        $("#f-pw").autocomplete = reg ? "new-password" : "current-password";
+        $("#hint-customer").textContent = "🛒 " + t("demo_hint", { email: DEMO.email, pw: DEMO.pw });
+        $("#hint-farmer").textContent = "🧑‍🌾 " + t("demo_hint_farmer", { email: DEMO_FARM.email, pw: FARMER_PW });
+        $("#demo-hint").hidden = reg;
+        ["#tab-login", "#tab-register"].forEach((sel) => {
+          const on = $(sel).dataset.mode === mode;
+          $(sel).classList.toggle("active", on);
+          $(sel).setAttribute("aria-selected", on);
+        });
+        document.title = t(reg ? "register_title" : "login_title") + " — FreshRoots";
+      }
+
+      function clearErrors() {
+        document.querySelectorAll(".err").forEach((e) => (e.textContent = ""));
+        document.querySelectorAll("input").forEach((i) => i.removeAttribute("aria-invalid"));
+      }
+      function fail(inputSel, errSel, key) {
+        $(errSel).textContent = t(key);
+        if (inputSel) $(inputSel).setAttribute("aria-invalid", "true");
+        return false;
+      }
+
+      document.querySelector(".tabs").addEventListener("click", (e) => {
+        const b = e.target.closest("button[data-mode]");
+        if (!b) return;
+        mode = b.dataset.mode;
+        clearErrors();
+        paint();
+      });
+
+      $("#auth-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+        clearErrors();
+        const name = $("#f-name").value.trim();
+        const email = $("#f-email").value.trim().toLowerCase();
+        const pw = $("#f-pw").value;
+        let ok = true;
+
+        if (mode === "register" && !name) ok = fail("#f-name", "#e-name", "err_required");
+        if (!email) ok = fail("#f-email", "#e-email", "err_required");
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) ok = fail("#f-email", "#e-email", "err_email");
+        if (!pw) ok = fail("#f-pw", "#e-pw", "err_required");
+        else if (mode === "register" && pw.length < 6) ok = fail("#f-pw", "#e-pw", "err_pw_short");
+        if (mode === "register" && pw && $("#f-pw2").value !== pw) ok = fail("#f-pw2", "#e-pw2", "err_pw_match");
+        if (!ok) {
+          const bad = document.querySelector('input[aria-invalid="true"]');
+          if (bad) bad.focus();
+          return;
+        }
+
+        users = FRStore.get("fr_users", []);
+        let user;
+        const farmer = farmerAccount(email);
+        if (mode === "login") {
+          if (farmer && pw === FARMER_PW) {
+            FRStore.set("fr_user", farmer);
+            FRStore.set("fr_flash", "login_ok");
+            location.href = "FreshRoots_Cooperative.html#/farmer";
+            return;
+          }
+          user = users.find((u) => u.email === email && u.pw === pw);
+          if (!user) return fail(null, "#e-form", "err_login");
+        } else {
+          if (farmer || users.some((u) => u.email === email)) return fail("#f-email", "#e-email", "err_exists");
+          user = { name, email, pw, role: "customer", profile: {} }; // demo only: never store plain passwords in a real app
+          users.push(user);
+          FRStore.set("fr_users", users);
+        }
+        FRStore.set("fr_user", { name: user.name, email: user.email, role: "customer" });
+        FRStore.set("fr_flash", "login_ok");
+        location.href = "FreshRoots_Cooperative.html#/home";
+      });
+
+      initLangPicker(document.getElementById("lang-bar"));
+      applyI18n();
+      paint();
+      document.addEventListener("langchange", () => {
+        paint();
+        // re-translate any visible error messages by re-validating is overkill; just clear them
+        clearErrors();
+      });
+    </script>
+  </body>
 </html>
